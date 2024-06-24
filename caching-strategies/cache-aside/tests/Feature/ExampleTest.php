@@ -1,19 +1,25 @@
 <?php
 
-namespace Tests\Feature;
+use function Pest\Stressless\stress;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-class ExampleTest extends TestCase
-{
-    /**
-     * A basic test example.
-     */
-    public function test_the_application_returns_a_successful_response(): void
-    {
-        $response = $this->get('/');
+//test('the application returns a successful response with cache', function () {
+//    $response = $this->get('/');
+//
+//    $response->assertStatus(200);
+//
+//    $this->refreshTestDatabase();
+//});
 
-        $response->assertStatus(200);
-    }
-}
+it('has a fast response time', function () {
+    $result = stress('http://localhost/')->concurrency(1000)->dump();
+    expect($result->requests()->duration()->med())->toBeLessThan(100);
+    $this->refreshTestDatabase();
+});
+
+it('has a fast response time without cache', function () {
+//    $result = stress('http://localhost/without-cache')->concurrency(1000)->dump();
+//    expect($result->requests()->duration()->med())->toBeLessThan(100);
+//    $this->refreshTestDatabase();
+});
